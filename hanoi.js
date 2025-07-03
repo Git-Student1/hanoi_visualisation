@@ -25,13 +25,25 @@ function start_hanoi() {
 
 
     draw.clear()
-    const towerLength = 100;
-    const towerWidth = 10;
+    // basic setup
+    const towerLength = 300;
+    const towerWidth = 3;
     const x_positions = []
     const number_of_topers = 3;
+    const distance_between_towers = 200;
+    // ring variable setup
+    const max_ring_width = distance_between_towers * 0.8;
+    const min_ring_width = towerWidth + 10;
+
+    const distance_between_rings = 10;
+    const ring_height = 5;
+    const ms_for_move = 500;
+    const additional_delay_per_move = 100;
+
+
     //positions setup
     for (let i = 0; i < number_of_topers; i++) {
-        x_positions.push(80 * (1 + i))
+        x_positions.push(distance_between_towers * (1 + i))
     }
 
     function tower_x(tower_index) {
@@ -43,15 +55,10 @@ function start_hanoi() {
         const tower1 = draw.rect(towerWidth, towerLength).fill('#f06')
         tower1.attr({ x: tower_x(i), y: highest_point_tower })
     }
-    // other setup
-    const lowest_point_y = highest_point_tower + towerLength
-    const distance_between_rings = 10;
-    const ring_height = 5;
     const rings = [];
-    const tower_rings = [Array.from({ length: n }, (e, i) => i), [], []];
-    const max_ring_width = 50
-    const min_ring_width = towerWidth + 10;
+    const lowest_point_y = highest_point_tower + towerLength
     const highest_ring_move_position = highest_point_tower - 20;
+    const tower_rings = [Array.from({ length: n }, (e, i) => i), [], []];
 
 
 
@@ -74,12 +81,12 @@ function start_hanoi() {
     let timer_index = 0;
 
     async function move_ring(from, to) {
-        await new Promise(resolve => setTimeout(resolve, 1800 * (timer_index++)));
+        await new Promise(resolve => setTimeout(resolve, (ms_for_move + additional_delay_per_move) * 3 * (timer_index++)));
         const ring_nr = tower_rings[from].pop();
         const ring = rings[ring_nr];
-        ring.animate(500).attr({ x: ring_x(from, ring.width()), y: highest_ring_move_position });
-        ring.animate(500).attr({ x: ring_x(to, ring.width()), y: highest_ring_move_position });
-        ring.animate(500).attr({ x: ring_x(to, ring.width()), y: ring_y(count_rings_on_tower(to)) });
+        ring.animate(ms_for_move).attr({ x: ring_x(from, ring.width()), y: highest_ring_move_position });
+        ring.animate(ms_for_move).attr({ x: ring_x(to, ring.width()), y: highest_ring_move_position });
+        ring.animate(ms_for_move).attr({ x: ring_x(to, ring.width()), y: ring_y(count_rings_on_tower(to)) });
         tower_rings[to].push(ring_nr);
     }
     console.log("Starting hanoi with", n, "rings");
